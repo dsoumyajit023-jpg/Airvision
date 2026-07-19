@@ -1,0 +1,25 @@
+{
+  "name": "AirVision AI",
+  "short_name": "AirVision",
+  "description": "Real-time computer vision visualization of subtle air disturbance, breath movement and optical variation captured by an RGB camera.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05060a",
+  "theme_color": "#0a0c10",
+  "icons": [
+    {
+      "src": "./icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

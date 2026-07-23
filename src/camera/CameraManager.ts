@@ -59,22 +59,43 @@ export class CameraManager {
       throw this.mapGetUserMediaError(err);
     }
 
-    this.videoEl.srcObject = this.stream;
-    this.videoEl.setAttribute("playsinline", "true");
+ this.videoEl.setAttribute("playsinline", "true");
     this.videoEl.muted = true;
+    this.videoEl.srcObject = this.stream;
 
     await new Promise<void>((resolve, reject) => {
-      const onLoaded = () => {
-        this.videoEl.removeEventListener("loadedmetadata", onLoaded);
+      const start = () => {
         this.videoEl
           .play()
           .then(() => resolve())
           .catch((e) => reject(e));
       };
+
+      // If metadata is already available (can happen on fast reloads or
+      // camera switches), don't wait for an event that may never fire again.
+      if (this.videoEl.readyState >= 1) {
+        start();
+        return;
+      }
+
+      const onLoaded = () => {
+        this.videoEl.removeEventListener("loadedmetadata", onLoaded);
+        start();
+      };
       this.videoEl.addEventListener("loadedmetadata", onLoaded);
+
+      // Safety net: never hang forever waiting for the browser event.
+      window.setTimeout(() => {
+        this.videoEl.removeEventListener("loadedmetadata", onLoaded);
+        if (this.videoEl.readyState >= 1) {
+          start();
+        } else {
+          reject(new Error("Camera stream did not become ready in time."));
+        }
+      }, 8000);
     });
 
-    await this.refreshDeviceList();
+    await this.refreshDeviceList();   
   }
 
   /** Switches between front (user) and back (environment) cameras. */

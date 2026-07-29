@@ -55,17 +55,23 @@ class AirVisionApp {
       this.recorder = new Recorder(this.outputCanvas);
       this.cameraManager = new CameraManager(this.video);
 
-      this.setLoadingText("Starting camera…");
+   this.setLoadingText("Starting camera…");
       await this.cameraManager.start("environment");
-
-      this.setLoadingText("Loading OpenCV.js runtime…");
-      const cv = await this.loadOpenCvWithFallback();
-      this.frameProcessor = new FrameProcessor(cv);
 
       this.setupUI();
       this.hideLoading();
       this.running = true;
       requestAnimationFrame(this.renderLoop);
+
+      // Load the CV engine in the background so the live camera is usable
+      // immediately; processing modes activate once this resolves.
+      this.loadOpenCvWithFallback()
+        .then((cv) => {
+          this.frameProcessor = new FrameProcessor(cv);
+        })
+        .catch((err) => {
+          this.ui.showError(this.toAppError(err));
+        });   
     } catch (err) {
       this.handleFatalError(err);
     }

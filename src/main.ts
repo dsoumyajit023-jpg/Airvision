@@ -55,7 +55,7 @@ class AirVisionApp {
       this.recorder = new Recorder(this.outputCanvas);
       this.cameraManager = new CameraManager(this.video);
 
-   this.setLoadingText("Starting camera…");
+      this.setLoadingText("Starting camera…");
       await this.cameraManager.start("environment");
 
       this.setupUI();
@@ -71,7 +71,7 @@ class AirVisionApp {
         })
         .catch((err) => {
           this.ui.showError(this.toAppError(err));
-        });   
+        });
     } catch (err) {
       this.handleFatalError(err);
     }

@@ -32,3 +32,5 @@ export class NoiseReduction {
     return size % 2 === 0 ? size + 1 : size;
   }
 }
+
+
